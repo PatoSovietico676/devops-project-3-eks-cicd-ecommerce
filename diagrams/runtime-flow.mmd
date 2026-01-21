@@ -1,0 +1,7 @@
+flowchart LR
+  U[User Browser] --> LB[Frontend LoadBalancer / ELB]
+  LB --> NG[Nginx in Frontend Pod]
+  NG -->|/ (static)| SPA[Angular UI]
+  NG -->|/api/* proxied| SVC[productssvc (ClusterIP)]
+  SVC --> API[Backend Pod (Spring Boot)]
+  API --> DB[(AWS RDS MySQL)]

@@ -1,0 +1,8 @@
+flowchart LR
+  A[GitHub] --> B[Jenkins Master]
+  B --> C[Jenkins Slave]
+  C --> D[SonarQube]
+  C --> E[Nexus]
+  C --> F[Docker Hub]
+  F --> G[AWS EKS]
+  G --> H[AWS RDS MySQL]

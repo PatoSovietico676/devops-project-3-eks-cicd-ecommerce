@@ -1,0 +1,12 @@
+# Screenshots to Add
+
+Add your proof screenshots here:
+
+- aws-ec2.png (EC2 instances: jenkins, slave, sonar, nexus, kube, nodegroup)
+- jenkins-nodes.png (Manage Jenkins → Nodes)
+- backend-pipeline.png (backend build success)
+- frontend-pipeline.png (frontend build success)
+- kubectl-svc.png (`kubectl get svc` showing LB vs ClusterIP)
+- app-working.png (browser showing working app)
+
+Tip: use clear names so recruiters can quickly verify.

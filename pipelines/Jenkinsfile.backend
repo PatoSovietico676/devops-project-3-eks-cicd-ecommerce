@@ -1,0 +1,122 @@
+pipeline {
+  agent { label 'slave-1' }
+
+  tools {
+    maven "Maven3"
+  }
+
+  environment {
+    APP_REPO   = "https://github.com/rishirk408/01_products_api_project3.git"
+    INFRA_REPO = "https://github.com/rishirk408/project3-infra.git"
+
+    IMAGE_REPO = "rishirk408/products_api"
+    IMAGE_TAG  = "${BUILD_NUMBER}"
+    IMAGE      = "${IMAGE_REPO}:${IMAGE_TAG}"
+
+    NEXUS_URL      = "65.2.142.109:8081"
+    NEXUS_REPO     = "01_product_api"
+    NEXUS_GROUP    = "org.scopeindia.ecomm"
+    NEXUS_ARTIFACT = "products_api"
+    NEXUS_VERSION  = "${BUILD_NUMBER}"
+
+    K8S_NAMESPACE = "default"
+  }
+
+  options { timestamps() }
+
+  triggers { pollSCM('H/5 * * * *') }
+
+  stages {
+
+    stage('Checkout (App + Infra)') {
+      steps {
+        cleanWs()
+        sh 'mkdir -p app infra'
+        dir('app') { git branch: 'main', url: "${APP_REPO}" }
+        dir('infra') { git branch: 'main', url: "${INFRA_REPO}" }
+      }
+    }
+
+    stage('Maven Build (skip tests)') {
+      steps {
+        dir('app') {
+          sh 'mvn -U clean package -DskipTests'
+        }
+      }
+    }
+
+    stage('SonarQube Analysis') {
+      steps {
+        dir('app') {
+          withSonarQubeEnv('sonar') {
+            sh """
+              mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
+              -Dsonar.projectKey=project3-backend \
+              -Dsonar.projectName=project3-backend
+            """
+          }
+        }
+      }
+    }
+
+    stage('Nexus Upload (Jar)') {
+      steps {
+        nexusArtifactUploader(
+          nexusVersion: 'nexus3',
+          protocol: 'http',
+          nexusUrl: "${NEXUS_URL}",
+          credentialsId: 'nexus-creds',
+          groupId: "${NEXUS_GROUP}",
+          version: "${NEXUS_VERSION}",
+          repository: "${NEXUS_REPO}",
+          artifacts: [[
+            artifactId: "${NEXUS_ARTIFACT}",
+            classifier: '',
+            file: 'app/target/products_api.jar',
+            type: 'jar'
+          ]]
+        )
+      }
+    }
+
+    stage('Docker Build (using Infra Dockerfile)') {
+      steps {
+        sh """
+          docker build \
+            -t ${IMAGE} \
+            -f infra/backend/docker/Dockerfile \
+            app
+        """
+      }
+    }
+
+    stage('Docker Push') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DU', passwordVariable: 'DP')]) {
+          sh 'echo $DP | docker login -u $DU --password-stdin'
+          sh 'docker push $IMAGE'
+        }
+      }
+    }
+
+    stage('K8s Deploy') {
+      steps {
+        sh """
+          kubectl apply -n ${K8S_NAMESPACE} -f infra/backend/k8s/service.yaml
+          kubectl apply -n ${K8S_NAMESPACE} -f infra/backend/k8s/deployment.yaml
+
+          kubectl set image -n ${K8S_NAMESPACE} deployment/productsapideployment \
+            productscontainer=${IMAGE}
+
+          kubectl rollout status -n ${K8S_NAMESPACE} deployment/productsapideployment
+        """
+      }
+    }
+  }
+
+  post {
+    always {
+      sh 'docker logout || true'
+    }
+  }
+}

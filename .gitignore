@@ -1,0 +1,30 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Secrets (never commit real secrets)
+*secret*.yaml
+**/secrets/*.yaml
+!**/secrets/*-example.yaml
+
+# Env files
+.env
+.env.*
+
+# Kubeconfig
+kubeconfig
+**/.kube/
+!**/.kube/README.md
+
+# Logs
+*.log
+
+# Node / build outputs (optional)
+node_modules/
+dist/
+build/
+target/

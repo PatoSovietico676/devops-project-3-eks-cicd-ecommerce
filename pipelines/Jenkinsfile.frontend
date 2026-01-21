@@ -1,0 +1,78 @@
+pipeline {
+  agent { label 'slave-1' }
+
+  environment {
+    APP_REPO   = "https://github.com/rishirk408/vinodses_ecomm_store_project3.git"
+    INFRA_REPO = "https://github.com/rishirk408/project3-infra.git"
+
+    IMAGE_REPO = "rishirk408/ecomm_store"
+    IMAGE_TAG  = "${BUILD_NUMBER}"
+    IMAGE      = "${IMAGE_REPO}:${IMAGE_TAG}"
+
+    K8S_NAMESPACE = "default"
+  }
+
+  options { timestamps() }
+
+  triggers { pollSCM('H/5 * * * *') }
+
+  stages {
+
+    stage('Checkout (App + Infra)') {
+      steps {
+        cleanWs()
+        sh 'mkdir -p app infra'
+        dir('app') { git branch: 'main', url: "${APP_REPO}" }
+        dir('infra') { git branch: 'main', url: "${INFRA_REPO}" }
+      }
+    }
+
+    stage('Prepare nginx default.conf for build') {
+      steps {
+        sh """
+          cp infra/frontend/nginx/default.conf infra/frontend/docker/default.conf
+        """
+      }
+    }
+
+    stage('Docker Build (using Infra Dockerfile)') {
+      steps {
+        sh """
+          docker build \
+            -t ${IMAGE} \
+            -f infra/frontend/docker/Dockerfile \
+            app
+        """
+      }
+    }
+
+    stage('Docker Push') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DU', passwordVariable: 'DP')]) {
+          sh 'echo $DP | docker login -u $DU --password-stdin'
+          sh 'docker push $IMAGE'
+        }
+      }
+    }
+
+    stage('K8s Deploy') {
+      steps {
+        sh """
+          kubectl apply -n ${K8S_NAMESPACE} -f infra/frontend/k8s/service.yaml
+          kubectl apply -n ${K8S_NAMESPACE} -f infra/frontend/k8s/deployment.yaml
+
+          kubectl set image -n ${K8S_NAMESPACE} deployment/ecommstoreappdeployment \
+            ecommstorecontainer=${IMAGE}
+
+          kubectl rollout status -n ${K8S_NAMESPACE} deployment/ecommstoreappdeployment
+        """
+      }
+    }
+  }
+
+  post {
+    always {
+      sh 'docker logout || true'
+    }
+  }
+}

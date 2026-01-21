@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecommstoreappdeployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecommstore
+  template:
+    metadata:
+      labels:
+        app: ecommstore
+    spec:
+      containers:
+        - name: ecommstorecontainer
+          image: rishirk408/ecomm_store:0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
